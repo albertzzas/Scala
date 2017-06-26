@@ -1,0 +1,1155 @@
+val name = readLine("Welcome to Game House. Please tell me your name: ")
+print("Thanks. Then please tell me your age: ")
+val age = readInt()
+if(age > 18) {
+  printf("Hi, %s, you are %d years old, so you are legel to come here!", name, age)
+} else {
+  printf("Sorry, boy, %s, you are only %d years old. you are illegal to come here!", name, age)
+}
+
+
+
+import scala.util.control.Breaks._
+breakable {
+    var n = 10
+    for(c <- "Hello World") {
+        if(n == 5) break;
+        print(c)
+        n -= 1
+    }
+}
+
+
+for(i <- 1 to 9; j <- 1 to 9) {
+  if(j == 9) {
+    println(i * j)
+  } else {
+    print(i * j + " ")
+  }
+}
+
+
+for(i <- 1 to 100 if i % 2 == 0) println(i)
+
+
+for(i <- 1 to 10) yield i
+
+
+def sayHello(name: String, age: Int) = {
+  if (age > 18) { printf("hi %s, you are a big boy\n", name); age } 
+  else { printf("hi %s, you are a little boy\n", name); age 
+}
+sayHello("leo", 30)
+
+
+def sum(n: Int) = {
+  var sum = 0;
+  for(i <- 1 to n) sum += i
+  sum
+}
+
+
+def fab(n: Int): Int = {
+  if(n <= 1) 1
+  else fab(n - 1) + fab(n - 2)
+}
+
+def sayHello(firstName: String, middleName: String = "William", lastName: String = "Croft") = firstName + " " + middleName + " " + lastName 
+
+
+def sayHello(name: String, age: Int = 20) {
+  print("Hello, " + name + ", your age is " + age)
+}
+sayHello("leo")
+
+
+sayHello(firstName = "Mick", lastName = "Nina", middleName = "Jack")
+
+
+sayHello("Mick", lastName = "Nina", middleName = "Jack")
+
+def sum(nums: Int*) = {
+  var res = 0
+  for (num <- nums) res += num
+  res
+}
+
+sum(1, 2, 3, 4, 5)
+
+val s = sum(1 to 5: _*)
+
+def sum2(nums: Int*): Int = {
+  if (nums.length == 0) 0
+  else nums.head + sum2(nums.tail: _*)
+}
+
+
+
+def sayHello(name: String) = "Hello, " + name
+def sayHello(name: String) { print("Hello, " + name); "Hello, " + name }
+def sayHello(name: String): Unit = "Hello, " + name
+
+
+
+import scala.io.Source._
+lazy val lines = fromFile("C://Users//Administrator//Desktop//test.txt").mkString
+即使文件不存在，也不会报错，只有第一个使用变量时会报错，证明了表达式计算的lazy特性。
+
+val lines = fromFile("C://Users//Administrator//Desktop//test.txt").mkString
+lazy val lines = fromFile("C://Users//Administrator//Desktop//test.txt").mkString
+def lines = fromFile("C://Users//Administrator//Desktop//test.txt").mkString
+
+
+
+try {
+  throw new IllegalArgumentException("x should not be negative")
+} catch {
+  case _: IllegalArgumentException => println("Illegal Argument!")
+} finally {
+  print("release resources!")
+}
+
+try {
+  throw new IOException("user defined exception")
+} catch {
+  case e1: IllegalArgumentException => println("illegal argument")
+  case e2: IOException => println("io exception")
+}
+
+
+
+// 数组初始化后，长度就固定下来了，而且元素全部根据其类型初始化
+val a = new Array[Int](10)
+a(0)
+a(0) = 1
+val a = new Array[String](10)
+
+// 可以直接使用Array()创建数组，元素类型自动推断
+val a = Array("hello", "world")
+a(0) = "hi"
+val a = Array("leo", 30)
+
+
+// 如果不想每次都使用全限定名，则可以预先导入ArrayBuffer类
+import scala.collection.mutable.ArrayBuffer
+// 使用ArrayBuffer()的方式可以创建一个空的ArrayBuffer
+val b = ArrayBuffer[Int]()
+// 使用+=操作符，可以添加一个元素，或者多个元素
+// 这个语法必须要谨记在心！因为spark源码里大量使用了这种集合操作语法！
+b += 1
+b += (2, 3, 4, 5)
+// 使用++=操作符，可以添加其他集合中的所有元素
+b ++= Array(6, 7, 8, 9, 10)
+// 使用trimEnd()函数，可以从尾部截断指定个数的元素
+b.trimEnd(5)
+
+// 使用insert()函数可以在指定位置插入元素
+// 但是这种操作效率很低，因为需要移动指定位置后的所有元素
+b.insert(5, 6)
+b.insert(6, 7, 8, 9, 10)
+// 使用remove()函数可以移除指定位置的元素
+b.remove(1)
+b.remove(1, 3)
+// Array与ArrayBuffer可以互相进行转换
+b.toArray
+a.toBuffer
+
+
+// 使用for循环和until遍历Array / ArrayBuffer
+// 使until是RichInt提供的函数
+for (i <- 0 until b.length)
+  println(b(i))
+// 跳跃遍历Array / ArrayBuffer
+for(i <- 0 until (b.length, 2))
+  println(b(i))
+// 从尾部遍历Array / ArrayBuffer
+for(i <- (0 until b.length).reverse)
+  println(b(i))
+// 使用“增强for循环”遍历Array / ArrayBuffer
+for (e <- b)
+  println(e)
+
+
+
+
+// 数组元素求和
+val a = Array(1, 2, 3, 4, 5)
+val sum = a.sum
+// 获取数组最大值
+val max = a.max
+// 对数组进行排序
+scala.util.Sorting.quickSort(a)
+// 获取数组中所有元素内容
+a.mkString
+a.mkString(", ")
+a.mkString("<", ",", ">")
+// toString函数
+a.toString
+b.toString
+
+
+
+// 对Array进行转换，获取的还是Array
+val a = Array(1, 2, 3, 4, 5)
+val a2 = for (ele <- a) yield ele * ele
+// 对ArrayBuffer进行转换，获取的还是ArrayBuffer
+val b = ArrayBuffer[Int]()
+b += (1, 2, 3, 4, 5)
+val b2 = for (ele <- b) yield ele * ele
+// 结合if守卫，仅转换需要的元素
+val a3 = for (ele <- if ele % 2 == 0) yield ele * ele
+
+// 使用函数式编程转换数组（通常使用第一种方式）
+a.filter(_ % 2 == 0).map(2 * _)
+a.filter { _ % 2 == 0 } map { 2 * _ }
+
+
+// 构建数组
+val a = ArrayBuffer[Int]()
+a += (1, 2, 3, 4, 5, -1, -3, -5, -9)
+
+// 每发现一个第一个负数之后的负数，就进行移除，性能较差，多次移动数组
+var foundFirstNegative = false
+var arrayLength = a.length
+var index = 0
+while (index < arrayLength) {
+  if (a(index) >= 0) {
+    index += 1
+  } else {
+    if (!foundFirstNegative) { foundFirstNegative = true; index += 1 }
+    else { a.remove(index); arrayLength -= 1 }
+  }
+} 
+
+
+// 重新构建数组
+val a = ArrayBuffer[Int]()
+a += (1, 2, 3, 4, 5, -1, -3, -5, -9)
+
+// 每记录所有不需要移除的元素的索引，稍后一次性移除所有需要移除的元素
+// 性能较高，数组内的元素迁移只要执行一次即可
+var foundFirstNegative = false
+val keepIndexes = for (i <- 0 until a.length if !foundFirstNegative || a(i) >= 0) yield {
+  if (a(i) < 0) foundFirstNegative = true
+  i
+}
+for (i <- 0 until keepIndexes.length) { a(i) = a(keepIndexes(i)) }
+a.trimEnd(a.length - keepIndexes.length)
+
+
+
+// 创建一个不可变的Map
+val ages = Map("Leo" -> 30, "Jen" -> 25, "Jack" -> 23)
+ages("Leo") = 31
+// 创建一个可变的Map
+val ages = scala.collection.mutable.Map("Leo" -> 30, "Jen" -> 25, "Jack" -> 23)
+ages("Leo") = 31
+// 使用另外一种方式定义Map元素
+val ages = Map(("Leo", 30), ("Jen", 25), ("Jack", 23))
+// 创建一个空的HashMap
+val ages = new scala.collection.mutable.HashMap[String, Int]
+
+
+// 获取指定key对应的value，如果key不存在，会报错
+val leoAge = ages("Leo")
+val leoAge = ages("leo")
+
+// 使用contains函数检查key是否存在
+val leoAge = if (ages.contains("leo")) ages("leo") else 0
+
+// getOrElse函数
+val leoAge = ages.getOrElse("leo", 0)
+
+// 更新Map的元素
+ages("Leo") = 31
+// 增加多个元素
+ages += ("Mike" -> 35, "Tom" -> 40)
+// 移除元素
+ages -= "Mike"
+// 更新不可变的map
+val ages2 = ages + ("Mike" -> 36, "Tom" -> 40)
+// 移除不可变map的元素
+val ages3 = ages - "Tom"
+
+// 遍历map的entrySet
+for ((key, value) <- ages) println(key + " " + value)
+// 遍历map的key
+for (key <- ages.keySet) println(key)
+// 遍历map的value
+for (value <- ages.values) println(value)
+// 生成新map，反转key和value
+for ((key, value) <- ages) yield (value, key)
+
+// SortedMap可以自动对Map的key的排序
+val ages = scala.collection.immutable.SortedMap("leo" -> 30, "alice" -> 15, "jen" -> 25)
+
+// LinkedHashMap可以记住插入entry的顺序
+val ages = new scala.collection.mutable.LinkedHashMap[String, Int]
+ages("leo") = 30
+ages("alice") = 15
+ages("jen") = 25
+
+// 简单Tuple
+val t = ("leo", 30)
+
+// 访问Tuple
+t._1
+
+// zip操作
+val names = Array("leo", "jack", "mike")
+val ages = Array(30, 24, 26)
+val nameAges = names.zip(ages)
+for ((name, age) <- nameAges) println(name + ": " + age)
+
+
+
+// 定义类，包含field以及方法
+class HelloWorld {
+  private var name = "leo"
+  def sayHello() { print("Hello, " + name) }  
+  def getName = name
+}
+
+// 创建类的对象，并调用其方法
+val helloWorld = new HelloWorld
+helloWorld.sayHello() 
+print(helloWorld.getName) // 也可以不加括号，如果定义方法时不带括号，则调用方法时也不能带括号
+
+// 定义不带private的var field，此时scala生成的面向JVM的类时，会定义为private的name字段，并提供public的getter和setter方法
+// 而如果使用private修饰field，则生成的getter和setter也是private的
+// 如果定义val field，则只会生成getter方法
+// 如果不希望生成setter和getter方法，则将field声明为private[this]
+class Student {
+  var name = "leo"
+}
+
+// 调用getter和setter方法，分别叫做name和name_ =
+val leo = new Student
+print(leo.name)
+leo.name = "leo1"
+
+// 如果只是希望拥有简单的getter和setter方法，那么就按照scala提供的语法规则，根据需求为field选择合适的修饰符就好：var、val、private、private[this]
+// 但是如果希望能够自己对getter与setter进行控制，则可以自定义getter与setter方法
+// 自定义setter方法的时候一定要注意scala的语法限制，签名、=、参数间不能有空格
+class Student {
+  private var myName = "leo"
+  def name = "your name is " + myName
+  def name_=(newValue: String)  {
+    print("you cannot edit your name!!!")
+  }
+}
+
+val leo = new Student
+print(leo.name)
+leo.name = "leo1"
+
+
+
+// 如果你不希望field有setter方法，则可以定义为val，但是此时就再也不能更改field的值了
+// 但是如果希望能够仅仅暴露出一个getter方法，并且还能通过某些方法更改field的值，那么需要综合使用private以及自定义getter方法
+// 此时，由于field是private的，所以setter和getter都是private，对外界没有暴露；自己可以实现修改field值的方法；自己可以覆盖getter方法
+class Student {
+  private var myName = "leo"
+
+  def updateName(newName: String) { 
+    if(newName == "leo1") myName = newName 
+    else print("not accept this new name!!!")
+  }
+
+  def name = "your name is " + myName
+}
+
+
+// 如果将field使用private来修饰，那么代表这个field是类私有的，在类的方法中，可以直接访问类的其他对象的private field
+// 这种情况下，如果不希望field被其他对象访问到，那么可以使用private[this]，意味着对象私有的field，只有本对象内可以访问到
+class Student {
+  private var myAge = 0
+  def age_=(newValue: Int) { 
+    if (newValue > 0) myAge = newValue 
+    else print("illegal age!") 
+  }
+  def age = myAge
+  def older(s: Student) = {
+    myAge > s.myAge
+  }
+}
+
+
+
+// Scala的getter和setter方法的命名与java是不同的，是field和field_=的方式
+// 如果要让scala自动生成java风格的getter和setter方法，只要给field添加@BeanProperty注解即可
+// 此时会生成4个方法，name: String、name_=(newValue: String): Unit、getName(): String、setName(newValue: String): Unit
+import scala.reflect.BeanProperty
+class Student {
+  @BeanProperty var name: String = _
+}
+class Student(@BeanProperty var name: String)
+
+val s = new Student
+s.setName("leo")
+s.getName()
+
+
+
+// Scala中，可以给类定义多个辅助constructor，类似于java中的构造函数重载
+// 辅助constructor之间可以互相调用，而且必须第一行调用主constructor
+class Student {
+  private var name = ""
+  private var age = 0
+  def this(name: String) {
+    this()
+    this.name = name
+  }
+  def this(name: String, age: Int) {
+    this(name)
+    this.age = age
+  }
+}
+
+// Scala中，主constructor是与类名放在一起的，与java不同
+// 而且类中，没有定义在任何方法或者是代码块之中的代码，就是主constructor的代码，这点感觉没有java那么清晰
+class Student(val name: String, val age: Int) {
+  println("your name is " + name + ", your age is " + age)
+}
+
+// 主constructor中还可以通过使用默认参数，来给参数默认的值
+class Student(val name: String = "leo", val age: Int = 30) {
+  println("your name is " + name + ", your age is " + age)
+}
+
+// 如果主constrcutor传入的参数什么修饰都没有，比如name: String，那么如果类内部的方法使用到了，则会声明为private[this] name；否则没有该field，就只能被constructor代码使用而已
+
+
+// Scala中，同样可以在类中定义内部类；但是与java不同的是，每个外部类的对象的内部类，都是不同的类
+import scala.collection.mutable.ArrayBuffer
+class Class {
+  class Student(val name: String) {}
+  val students = new ArrayBuffer[Student]
+  def getStudent(name: String) =  {
+    new Student(name)
+  }
+}
+
+val c1 = new Class
+val s1 = c1.getStudent("leo")
+c1.students += s1
+
+val c2 = new Class
+val s2 = c2.getStudent("leo")
+c1.students += s2
+
+/////////////////////////////
+// Scala中，让子类继承父类，与Java一样，也是使用extends关键字
+// 继承就代表，子类可以从父类继承父类的field和method；然后子类可以在自己内部放入父类所没有，子类特有的field和method；使用继承可以有效复用代码
+// 子类可以覆盖父类的field和method；但是如果父类用final修饰，field和method用final修饰，则该类是无法被继承的，field和method是无法被覆盖的
+
+class Person {
+  private var name = "leo"
+  def getName = name
+}
+class Student extends Person {
+  private var score = "A"
+  def getScore = score
+}
+
+// Scala中，如果子类要覆盖一个父类中的非抽象方法，则必须使用override关键字
+// override关键字可以帮助我们尽早地发现代码里的错误，比如：override修饰的父类方法的方法名我们拼写错了；比如要覆盖的父类方法的参数我们写错了；等等
+// 此外，在子类覆盖父类方法之后，如果我们在子类中就是要调用父类的被覆盖的方法呢？那就可以使用super关键字，显式地指定要调用父类的方法
+
+class Person {
+  private var name = "leo"
+  def getName = name
+}
+class Student extends Person {
+  private var score = "A"
+  def getScore = score
+  override def getName = "Hi, I'm " + super.getName
+}
+
+
+// Scala中，子类可以覆盖父类的val field，而且子类的val field还可以覆盖父类的val field的getter方法；只要在子类中使用override关键字即可
+
+class Person {
+  val name: String = "Person"
+  def age: Int = 0
+}
+
+class Student extends Person {
+  override val name: String = "leo"
+  override val age: Int = 30
+}
+
+
+// 如果我们创建了子类的对象，但是又将其赋予了父类类型的变量。则在后续的程序中，我们又需要将父类类型的变量转换为子类类型的变量，应该如何做？
+// 首先，需要使用isInstanceOf判断对象是否是指定类的对象，如果是的话，则可以使用asInstanceOf将对象转换为指定类型
+// 注意，如果对象是null，则isInstanceOf一定返回false，asInstanceOf一定返回null
+// 注意，如果没有用isInstanceOf先判断对象是否为指定类的实例，就直接用asInstanceOf转换，则可能会抛出异常
+
+class Person
+class Student extends Person
+val p: Person =  new Student
+var s: Student = null
+if (p.isInstanceOf[Student]) s = p.asInstanceOf[Student]
+
+// isInstanceOf只能判断出对象是否是指定类以及其子类的对象，而不能精确判断出，对象就是指定类的对象
+// 如果要求精确地判断对象就是指定类的对象，那么就只能使用getClass和classOf了
+// 对象.getClass可以精确获取对象的类，classOf[类]可以精确获取类，然后使用==操作符即可判断
+
+class Person
+class Student extends Person
+val p: Person = new Student
+p.isInstanceOf[Person]
+p.getClass == classOf[Person]
+p.getClass == classOf[Student]
+
+// 但是在实际开发中，比如spark的源码中，大量的地方都是使用了模式匹配的方式来进行类型的判断，这种方式更加地简洁明了，而且代码得可维护性和可扩展性也非常的高
+// 使用模式匹配，功能性上来说，与isInstanceOf一样，也是判断主要是该类以及该类的子类的对象即可，不是精准判断的
+
+class Person
+class Student extends Person
+val p: Person = new Student
+
+p match {
+  case per: Person => println("it's Person's object")
+  case _  => println("unknown type")
+}
+
+// 跟java一样，scala中同样可以使用protected关键字来修饰field和method，这样在子类中就不需要super关键字，直接就可以访问field和method
+// 还可以使用protected[this]，则只能在当前子类对象中访问父类的field和method，无法通过其他子类对象访问父类的field和method
+
+class Person {
+  protected var name: String = "leo"
+  protected[this] var hobby: String = "game"
+} 
+class Student extends Person {
+  def sayHello = println("Hello, " + name)
+  def makeFriends(s: Student) {
+    println("my hobby is " + hobby + ", your hobby is " + s.hobby)
+  }
+}
+
+
+// Scala中，每个类可以有一个主constructor和任意多个辅助constructor，而每个辅助constructor的第一行都必须是调用其他辅助constructor或者是主constructor；因此子类的辅助constructor是一定不可能直接调用父类的constructor的
+// 只能在子类的主constructor中调用父类的constructor，以下这种语法，就是通过子类的主构造函数来调用父类的构造函数
+// 注意！如果是父类中接收的参数，比如name和age，子类中接收时，就不要用任何val或var来修饰了，否则会认为是子类要覆盖父类的field
+class Person(val name: String, val age: Int)
+class Student(name: String, age: Int, var score: Double) extends Person(name, age) {
+  def this(name: String) {
+    this(name, 0, 0)
+  }
+  def this(age: Int) {
+    this("leo", age, 0)
+  }
+}
+
+// 在Scala中，匿名子类是非常常见，而且非常强大的。Spark的源码中也大量使用了这种匿名子类。
+// 匿名子类，也就是说，可以定义一个类的没有名称的子类，并直接创建其对象，然后将对象的引用赋予一个变量。之后甚至可以将该匿名子类的对象传递给其他函数。
+
+class Person(protected val name: String) {
+  def sayHello = "Hello, I'm " + name
+}
+val p = new Person("leo") {
+  override def sayHello = "Hi, I'm " + name
+}
+def greeting(p: Person { def sayHello: String }) {
+  println(p.sayHello)
+}
+
+
+// 如果在父类中，有某些方法无法立即实现，而需要依赖不同的子来来覆盖，重写实现自己不同的方法实现。此时可以将父类中的这些方法不给出具体的实现，只有方法签名，这种方法就是抽象方法。
+// 而一个类中如果有一个抽象方法，那么类就必须用abstract来声明为抽象类，此时抽象类是不可以实例化的
+// 在子类中覆盖抽象类的抽象方法时，不需要使用override关键字
+
+abstract class Person(val name: String) {
+  def sayHello: Unit
+}
+class Student(name: String) extends Person(name) {
+  def sayHello: Unit = println("Hello, " + name)
+}
+
+// 如果在父类中，定义了field，但是没有给出初始值，则此field为抽象field
+// 抽象field意味着，scala会根据自己的规则，为var或val类型的field生成对应的getter和setter方法，但是父类中是没有该field的
+// 子类必须覆盖field，以定义自己的具体field，并且覆盖抽象field，不需要使用override关键字
+
+abstract class Person {
+  val name: String
+}
+
+class Student extends Person {
+  val name: String = "leo"
+}
+
+//////////////////////////////
+
+// Scala中的函数是一等公民，可以独立定义，独立存在，而且可以直接将函数作为值赋值给变量
+// Scala的语法规定，将函数赋值给变量时，必须在函数后面加上空格和下划线
+
+def sayHello(name: String) { println("Hello, " + name) }
+val sayHelloFunc = sayHello _
+sayHelloFunc("leo")
+
+
+// Scala中，函数也可以不需要命名，此时函数被称为匿名函数。// 可以直接定义函数之后，将函数赋值给某个变量；也可以将直接定义的匿名函数传入其他函数之中
+// Scala定义匿名函数的语法规则就是，(参数名: 参数类型) => 函数体
+// 这种匿名函数的语法必须深刻理解和掌握，在spark的中有大量这样的语法，如果没有掌握，是看不懂spark源码的
+
+val sayHelloFunc = (name: String) => println("Hello, " + name)
+
+// Scala中，由于函数是一等公民，因此可以直接将某个函数传入其他函数，作为参数。这个功能是极其强大的，也是Java这种面向对象的编程语言所不具备的。
+// 接收其他函数作为参数的函数，也被称作高阶函数（higher-order function）
+val sayHelloFunc = (name: String) => println("Hello, " + name)
+def greeting(func: (String) => Unit, name: String) { func(name) }
+greeting(sayHelloFunc, "leo")
+
+Array(1, 2, 3, 4, 5).map((num: Int) => num * num)
+
+// 高阶函数的另外一个功能是将函数作为返回值
+def getGreetingFunc(msg: String) = (name: String) => println(msg + ", " + name)
+val greetingFunc = getGreetingFunc("hello")
+greetingFunc("leo")
+
+
+// 高阶函数可以自动推断出参数类型，而不需要写明类型；而且对于只有一个参数的函数，还可以省去其小括号；如果仅有的一个参数在右侧的函数体内只使用一次，则还可以将接收参数省略，并且将参数用_来替代
+// 诸如3 * _的这种语法，必须掌握！！spark源码中大量使用了这种语法！
+
+def greeting(func: (String) => Unit, name: String) { func(name) }
+greeting((name: String) => println("Hello, " + name), "leo")
+greeting((name) => println("Hello, " + name), "leo")
+greeting(name => println("Hello, " + name), "leo")
+
+def triple(func: (Int) => Int) = { func(3) }
+triple(3 * _)
+
+
+// map: 对传入的每个元素都进行映射，返回一个处理后的元素
+Array(1, 2, 3, 4, 5).map(2 * _)
+
+// foreach: 对传入的每个元素都进行处理，但是没有返回值
+(1 to 9).map("*" * _).foreach(println _)
+
+// filter: 对传入的每个元素都进行条件判断，如果对元素返回true，则保留该元素，否则过滤掉该元素
+(1 to 20).filter(_ % 2 == 0)
+
+// reduceLeft: 从左侧元素开始，进行reduce操作，即先对元素1和元素2进行处理，然后将结果与元素3处理，再将结果与元素4处理，依次类推，即为reduce；reduce操作必须掌握！spark编程的重点！！！
+// 下面这个操作就相当于1 * 2 * 3 * 4 * 5 * 6 * 7 * 8 * 9
+(1 to 9).reduceLeft( _ * _)
+
+// sortWith: 对元素进行两两相比，进行排序
+Array(3, 2, 5, 4, 10, 1).sortWith(_ < _)
+
+
+
+// 闭包最简洁的解释：函数在变量不处于其有效作用域时，还能够对变量进行访问，即为闭包
+
+def getGreetingFunc(msg: String) = (name: String) => println(msg + ", " + name)
+val greetingFuncHello = getGreetingFunc("hello")
+val greetingFuncHi = getGreetingFunc("hi")
+
+// 两次调用getGreetingFunc函数，传入不同的msg，并创建不同的函数返回
+// 然而，msg只是一个局部变量，却在getGreetingFunc执行完之后，还可以继续存在创建的函数之中；greetingFuncHello("leo")，调用时，值为"hello"的msg被保留在了函数体内部，可以反复的使用
+// 这种变量超出了其作用域，还可以使用的情况，即为闭包
+
+// Scala通过为每个函数创建对象来实现闭包，实际上对于getGreetingFunc函数创建的函数，msg是作为函数对象的变量存在的，因此每个函数才可以拥有不同的msg
+
+// Scala编译器会确保上述闭包机制
+
+// 在Java中，不支持直接将函数传入一个方法作为参数，通常来说，唯一的办法就是定义一个实现了某个接口的类的实例对象，该对象只有一个方法；而这些接口都只有单个的抽象方法，也就是single abstract method，简称为SAM
+
+// 由于Scala是可以调用Java的代码的，因此当我们调用Java的某个方法时，可能就不得不创建SAM传递给方法，非常麻烦；但是Scala又是支持直接传递函数的。此时就可以使用Scala提供的，在调用Java方法时，使用的功能，SAM转换，即将SAM转换为Scala函数
+
+// 要使用SAM转换，需要使用Scala提供的特性，隐式转换
+
+import javax.swing._
+import java.awt.event._
+
+val button = new JButton("Click")
+button.addActionListener(new ActionListener {
+  override def actionPerformed(event: ActionEvent) {
+    println("Click Me!!!")
+  }
+})
+
+implicit def getActionListener(actionProcessFunc: (ActionEvent) => Unit) = new ActionListener {
+  override def actionPerformed(event: ActionEvent) {
+    actionProcessFunc(event)
+  }
+}
+button.addActionListener((event: ActionEvent) => println("Click Me!!!"))
+
+
+// Curring函数，指的是，将原来接收两个参数的一个函数，转换为两个函数，第一个函数接收原先的第一个参数，然后返回接收原先第二个参数的第二个函数。
+// 在函数调用的过程中，就变为了两个函数连续调用的形式
+// 在Spark的源码中，也有体现，所以对()()这种形式的Curring函数，必须掌握！
+
+def sum(a: Int, b: Int) = a + b
+sum(1, 1)
+
+def sum2(a: Int) = (b: Int) => a + b
+sum2(1)(1)
+
+def sum3(a: Int)(b: Int) = a + b
+
+// Scala中，不需要使用return来返回函数的值，函数最后一行语句的值，就是函数的返回值。在Scala中，return用于在匿名函数中返回值给包含匿名函数的带名函数，并作为带名函数的返回值。
+// 使用return的匿名函数，是必须给出返回类型的，否则无法通过编译
+
+def greeting(name: String) = {
+  def sayHello(name: String):String = {
+    return "Hello, " + name
+  }
+  sayHello(name)
+}
+
+
+///////////////////////////////////////////
+
+
+// List代表一个不可变的列表
+// List的创建，val list = List(1, 2, 3, 4)
+// List有head和tail，head代表List的第一个元素，tail代表第一个元素之后的所有元素，list.head，list.tail
+// List有特殊的::操作符，可以用于将head和tail合并成一个List，0 :: list
+// ::这种操作符要清楚，在spark源码中都是有体现的，一定要能够看懂！
+// 如果一个List只有一个元素，那么它的head就是这个元素，它的tail是Nil
+
+// 案例：用递归函数来给List中每个元素都加上指定前缀，并打印加上前缀的元素
+def decorator(l: List[Int], prefix: String) {
+  if (l != Nil) { 
+    println(prefix + l.head)
+    decorator(l.tail, prefix)
+  }
+}
+
+// LinkedList代表一个可变的列表，使用elem可以引用其头部，使用next可以引用其尾部
+// val l = scala.collection.mutable.LinkedList(1, 2, 3, 4, 5); l.elem; l.next
+
+// 案例：使用while循环将LinkedList中的每个元素都乘以2
+val list = scala.collection.mutable.LinkedList(1, 2, 3, 4, 5)
+var currentList = list
+while (currentList != Nil) {
+  currentList.elem = currentList.elem * 2
+  currentList = currentList.next
+}
+
+// 案例：使用while循环将LinkedList中，从第一个元素开始，每隔一个元素，乘以2
+val list = scala.collection.mutable.LinkedList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
+var currentList = list
+var first = true
+while (currentList != Nil && currentList.next != Nil) {
+  if (first) { currentList.elem = currentList.elem * 2; first = false }
+  currentList  = currentList.next.next
+  if (currentList != Nil) currentList.elem = currentList.elem * 2
+}
+
+// Set代表一个没有重复元素的集合
+// 将重复元素加入Set是没有用的，比如val s = Set(1, 2, 3); s + 1; s + 4
+// 而且Set是不保证插入顺序的，也就是说，Set中的元素是乱序的，val s = new scala.collection.mutable.HashSet[Int](); s += 1; s += 2; s += 5
+
+// LinkedHashSet会用一个链表维护插入顺序，val s = new scala.collection.mutable.LinkedHashSet[Int](); i += 1; s += 2; s += 5
+
+// SrotedSet会自动根据key来进行排序，val s = scala.collection.mutable.SortedSet("orange", "apple", "banana")
+
+
+// 集合的函数式编程非常非常非常之重要！！！
+// 必须完全掌握和理解Scala的高阶函数是什么意思，Scala的集合类的map、flatMap、reduce、reduceLeft、foreach等这些函数，就是高阶函数，因为可以接收其他函数作为参数
+// 高阶函数的使用，也是Scala与Java最大的一点不同！！！因为Java里面是没有函数式编程的，也肯定没有高阶函数，也肯定无法直接将函数传入一个方法，或者让一个方法返回一个函数
+// 对Scala高阶函数的理解、掌握和使用，可以大大增强你的技术，而且也是Scala最有诱惑力、最有优势的一个功能！！！
+// 此外，在Spark源码中，有大量的函数式编程，以及基于集合的高阶函数的使用！！！所以必须掌握，才能看懂spark源码
+
+// map案例实战：为List中每个元素都添加一个前缀
+List("Leo", "Jen", "Peter", "Jack").map("name is " + _)
+
+// faltMap案例实战：将List中的多行句子拆分成单词
+List("Hello World", "You Me").flatMap(_.split(" "))
+
+// foreach案例实战：打印List中的每个单词
+List("I", "have", "a", "beautiful", "house").foreach(println(_))
+
+// zip案例实战：对学生姓名和学生成绩进行关联
+List("Leo", "Jen", "Peter", "Jack").zip(List(100, 90, 75, 83))
+
+
+// 使用scala的io包将文本文件内的数据读取出来
+val lines01 = scala.io.Source.fromFile("C://Users//Administrator//Desktop//test01.txt").mkString
+val lines02 = scala.io.Source.fromFile("C://Users//Administrator//Desktop//test02.txt").mkString
+// 使用List的伴生对象，将多个文件内的内容创建为一个List
+val lines = List(lines01, lines02)
+
+// 下面这一行才是我们的案例的核心和重点，因为有多个高阶函数的链式调用，以及大量下划线的使用，如果没有透彻掌握之前的课讲解的Scala函数式编程，那么下面这一行代码，完全可能会看不懂！！！
+// 但是下面这行代码其实就是Scala编程的精髓所在，就是函数式编程，也是Scala相较于Java等编程语言最大的功能优势所在
+// 而且，spark的源码中大量使用了这种复杂的链式调用的函数式编程
+// 而且，spark本身提供的开发人员使用的编程api的风格，完全沿用了Scala的函数式编程，比如Spark自身的api中就提供了map、flatMap、reduce、foreach，以及更高级的reduceByKey、groupByKey等高阶函数
+// 如果要使用Scala进行spark工程的开发，那么就必须掌握这种复杂的高阶函数的链式调用！！！
+
+lines.flatMap(_.split(" ")).map((_, 1)).map(_._2).reduceLeft(_ + _)
+
+
+////////////////////////////////////////////
+
+// Scala是没有Java中的switch case语法的，相对应的，Scala提供了更加强大的match case语法，即模式匹配，类替代switch case，match case也被称为模式匹配
+// Scala的match case与Java的switch case最大的不同点在于，Java的switch case仅能匹配变量的值，比1、2、3等；而Scala的match case可以匹配各种情况，比如变量的类型、集合的元素、有值或无值
+// match case的语法如下：变量 match { case 值 => 代码 }。如果值为下划线，则代表了不满足以上所有情况下的默认情况如何处理。此外，match case中，只要一个case分支满足并处理了，就不会继续判断下一个case分支了。（与Java不同，java的switch case需要用break阻止）
+// match case语法最基本的应用，就是对变量的值进行模式匹配
+
+// 案例：成绩评价
+def judgeGrade(grade: String) {
+  grade match {
+    case "A" => println("Excellent")
+    case "B" => println("Good")
+    case "C" => println("Just so so")
+    case _ => println("you need work harder")
+  }
+}
+
+
+// Scala的模式匹配语法，有一个特点在于，可以在case后的条件判断中，不仅仅只是提供一个值，而是可以在值后面再加一个if守卫，进行双重过滤
+
+// 案例：成绩评价（升级版）
+def judgeGrade(name: String, grade: String) {
+  grade match {
+    case "A" => println(name + ", you are excellent")
+    case "B" => println(name + ", you are good")
+    case "C" => println(name + ", you are just so so")
+    case _ if name == "leo" => println(name + ", you are a good boy, come on")
+    case _ => println("you need to work harder")
+  }
+}
+
+
+
+// Scala的模式匹配语法，有一个特点在于，可以将模式匹配的默认情况，下划线，替换为一个变量名，此时模式匹配语法就会将要匹配的值赋值给这个变量，从而可以在后面的处理语句中使用要匹配的值
+// 为什么有这种语法？？思考一下。因为只要使用用case匹配到的值，是不是我们就知道这个只啦！！在这个case的处理语句中，是不是就直接可以使用写程序时就已知的值！
+// 但是对于下划线_这种情况，所有不满足前面的case的值，都会进入_这种默认情况进行处理，此时如果我们在处理语句中需要拿到具体的值进行处理呢？那就需要使用这种在模式匹配中进行变量赋值的语法！！
+
+// 案例：成绩评价（升级版）
+def judgeGrade(name: String, grade: String) {
+  grade match {
+    case "A" => println(name + ", you are excellent")
+    case "B" => println(name + ", you are good")
+    case "C" => println(name + ", you are just so so")
+    case _grade if name == "leo" => println(name + ", you are a good boy, come on, your grade is " + _grade)
+    case _grade => println("you need to work harder, your grade is " + _grade)
+  }
+}
+
+// Scala的模式匹配一个强大之处就在于，可以直接匹配类型，而不是值！！！这点是java的switch case绝对做不到的。
+// 理论知识：对类型如何进行匹配？其他语法与匹配值其实是一样的，但是匹配类型的话，就是要用“case 变量: 类型 => 代码”这种语法，而不是匹配值的“case 值 => 代码”这种语法。
+
+// 案例：异常处理
+import java.io._
+
+def processException(e: Exception) {
+  e match {
+    case e1: IllegalArgumentException => println("you have illegal arguments! exception is: " + e1)
+    case e2: FileNotFoundException => println("cannot find the file you need read or write!, exception is: " + e2)
+    case e3: IOException => println("you got an error while you were doing IO operation! exception is: " + e3)
+    case _: Exception => println("cannot know which exception you have!" )
+  }
+}
+
+// 对Array进行模式匹配，分别可以匹配带有指定元素的数组、带有指定个数元素的数组、以某元素打头的数组
+// 对List进行模式匹配，与Array类似，但是需要使用List特有的::操作符
+
+// 案例：对朋友打招呼
+def greeting(arr: Array[String]) {
+  arr match {
+    case Array("Leo") => println("Hi, Leo!")
+    case Array(girl1, girl2, girl3) => println("Hi, girls, nice to meet you. " + girl1 + " and " + girl2 + " and " + girl3)
+    case Array("Leo", _*) => println("Hi, Leo, please introduce your friends to me.")
+    case _ => println("hey, who are you?")
+  }
+}
+
+def greeting(list: List[String]) {
+  list match {
+    case "Leo" :: Nil => println("Hi, Leo!")
+    case girl1 :: girl2 :: girl3 :: Nil => println("Hi, girls, nice to meet you. " + girl1 + " and " + girl2 + " and " + girl3)
+    case "Leo" :: tail => println("Hi, Leo, please introduce your friends to me.")
+    case _ => println("hey, who are you?")
+  }
+}
+
+// Scala中提供了一种特殊的类，用case class进行声明，中文也可以称作样例类。case class其实有点类似于Java中的JavaBean的概念。即只定义field，并且由Scala编译时自动提供getter和setter方法，但是没有method。
+// case class的主构造函数接收的参数通常不需要使用var或val修饰，Scala自动就会使用val修饰（但是如果你自己使用var修饰，那么还是会按照var来）
+//  Scala自动为case class定义了伴生对象，也就是object，并且定义了apply()方法，该方法接收主构造函数中相同的参数，并返回case class对象
+
+// 案例：学校门禁
+class Person
+case class Teacher(name: String, subject: String) extends Person
+case class Student(name: String, classroom: String) extends Person
+
+def judgeIdentify(p: Person) {
+  p match {
+    case Teacher(name, subject) => println("Teacher, name is " + name + ", subject is " + subject)
+    case Student(name, classroom) => println("Student, name is " + name + ", classroom is " + classroom)
+    case _ => println("Illegal access, please go out of the school!")
+  }  
+}
+
+
+// Scala有一种特殊的类型，叫做Option。Option有两种值，一种是Some，表示有值，一种是None，表示没有值。
+// Option通常会用于模式匹配中，用于判断某个变量是有值还是没有值，这比null来的更加简洁明了
+// Option的用法必须掌握，因为Spark源码中大量地使用了Option，比如Some(a)、None这种语法，因此必须看得懂Option模式匹配，才能够读懂spark源码。
+
+// 案例：成绩查询
+val grades = Map("Leo" -> "A", "Jack" -> "B", "Jen" -> "C")
+
+def getGrade(name: String) {
+  val grade = grades.get(name)
+  grade match {
+    case Some(grade) => println("your grade is " + grade)
+    case None => println("Sorry, your grade information is not in the system")
+  }
+}
+
+
+////////////////////////////////////
+案例：新生报到，每个学生来自不同的地方，id可能是Int，可能是String
+
+class Student[T](val localId: T) {
+  def getSchoolId(hukouId: T) = "S-" + hukouId + "-" + localId
+}
+
+val leo = new Student[Int](111)
+
+
+
+案例：卡片售卖机，可以指定卡片的内容，内容可以是String类型或Int类型
+def getCard[T](content: T) = {
+  if(content.isInstanceOf[Int]) "card: 001, " + content
+  else if(content.isInstanceOf[String]) "card: this is your card, " + content
+  else "card: " + content
+}
+
+getCard[String]("hello world")
+
+
+案例：在派对上交朋友
+class Person(val name: String) {
+  def sayHello = println("Hello, I'm " + name)
+  def makeFriends(p: Person) {
+    sayHello
+    p.sayHello
+  }
+}
+class Student(name: String) extends Person(name)
+class Party[T <: Person](p1: T, p2: T) {
+  def play = p1.makeFriends(p2)
+}
+
+
+案例：领身份证
+class Father(val name: String) 
+class Child(name: String) extends Father(name)
+
+def getIDCard[R >: Child](person: R) {
+  if (person.getClass == classOf[Child]) println("please tell us your parents' names.")
+  else if (person.getClass == classOf[Father]) println("sign your name for your child's id card.")
+  else println("sorry, you are not allowed to get id card.")
+}
+
+
+// 上下边界Bounds，虽然可以让一种泛型类型，支持有父子关系的多种类型。但是，在某个类与上下边界Bounds指定的父子类型范围内的类都没有任何关系，则默认是肯定不能接受的。
+// 然而，View Bounds作为一种上下边界Bounds的加强版，支持可以对类型进行隐式转换，将指定的类型进行隐式转换后，再判断是否在边界指定的类型范围内
+
+案例：跟小狗交朋友
+class Person(val name: String) {
+  def sayHello = println("Hello, I'm " + name)
+  def makeFriends(p: Person) {
+    sayHello
+    p.sayHello
+  }
+}
+class Student(name: String) extends Person(name)
+class Dog(val name: String) { def sayHello = println("Wang, Wang, I'm " + name) }
+
+implicit def dog2person(dog: Object): Person = if(dog.isInstanceOf[Dog]) {val _dog = dog.asInstanceOf[Dog]; new Person(_dog.name) } else Nil
+
+class Party[T <% Person](p1: T, p2: T)
+
+
+// Context Bounds是一种特殊的Bounds，它会根据泛型类型的声明，比如“T: 类型”要求必须存在一个类型为“类型[T]”的隐式值。其实个人认为，Context Bounds之所以叫Context，是因为它基于的是一种全局的上下文，需要使用到上下文中的隐式值以及注入。
+
+案例：使用Scala内置的比较器比较大小
+class Calculator[T: Ordering] (val number1: T, val number2: T) {
+  def max(implicit order: Ordering[T]) = if(order.compare(number1, number2) > 0) number1 else number2
+}
+
+
+// 在Scala中，如果要实例化一个泛型数组，就必须使用Manifest Context Bounds。也就是说，如果数组元素类型为T的话，需要为类或者函数定义[T: Manifest]泛型类型，这样才能实例化Array[T]这种泛型数组。
+
+案例：打包饭菜（一种食品打成一包）
+class Meat(val name: String)
+class Vegetable(val name: String)
+
+def packageFood[T: Manifest] (food: T*) = {
+  val foodPackage = new Array[T](food.length)
+  for(i <- 0 until food.length) foodPackage(i) = food(i)
+  foodPackage 
+}
+
+
+// Scala的协变和逆变是非常有特色的！完全解决了Java中的泛型的一大缺憾！
+// 举例来说，Java中，如果有Professional是Master的子类，那么Card[Professionnal]是不是Card[Master]的子类？答案是：不是。因此对于开发程序造成了很多的麻烦。
+// 而Scala中，只要灵活使用协变和逆变，就可以解决Java泛型的问题。
+
+案例：进入会场
+class Master
+class Professional extends Master
+
+// 大师以及大师级别以下的名片都可以进入会场
+class Card[+T] (val name: String)
+def enterMeet(card: Card[Master]) {
+  println("welcome to have this meeting!")
+}
+
+// 只要专家级别的名片就可以进入会场，如果大师级别的过来了，当然可以了！
+class Card[-T] (val name: String)
+def enterMeet(card: Card[Professional]) {
+  println("welcome to have this meeting!")
+}
+// 在Scala里，有一种特殊的类型参数，就是Existential Type，存在性类型。这种类型务必掌握是什么意思，因为在spark源码实在是太常见了！
+
+Array[T] forSome { type T }
+Array[_]
+
+
+
+//////////////////////////
+// 要实现隐式转换，只要程序可见的范围内定义隐式转换函数即可。Scala会自动使用隐式转换函数。隐式转换函数与普通函数唯一的语法区别就是，要以implicit开头，而且最好要定义函数返回类型。
+
+// 案例：特殊售票窗口（只接受特殊人群，比如学生、老人等）
+class SpecialPerson(val name: String)
+class Student(val name: String)
+class Older(val name: String)
+
+implicit def object2SpecialPerson (obj: Object): SpecialPerson = {
+  if (obj.getClass == classOf[Student]) { val stu = obj.asInstanceOf[Student]; new SpecialPerson(stu.name) }
+  else if (obj.getClass == classOf[Older]) { val older = obj.asInstanceOf[Older]; new SpecialPerson(older.name) }
+  else Nil
+}
+
+var ticketNumber = 0
+def buySpecialTicket(p: SpecialPerson) = {
+  ticketNumber += 1
+  "T-" + ticketNumber
+}
+
+
+// 隐式转换非常强大的一个功能，就是可以在不知不觉中加强现有类型的功能。也就是说，可以为某个类定义一个加强版的类，并定义互相之间的隐式转换，从而让源类在使用加强版的方法时，由Scala自动进行隐式转换为加强类，然后再调用该方法。
+
+// 案例：超人变身
+
+class Man(val name: String)
+class Superman(val name: String) {
+  def emitLaser = println("emit a laster!")
+}
+
+implicit def man2superman(man: Man): Superman = new Superman(man.name)
+
+val leo = new Man("leo")
+leo.emitLaser
+// Scala默认会使用两种隐式转换，一种是源类型，或者目标类型的伴生对象内的隐式转换函数；一种是当前程序作用域内的可以用唯一标识符表示的隐式转换函数。
+
+// 如果隐式转换函数不在上述两种情况下的话，那么就必须手动使用import语法引入某个包下的隐式转换函数，比如import test._。通常建议，仅仅在需要进行隐式转换的地方，比如某个函数或者方法内，用iimport导入隐式转换函数，这样可以缩小隐式转换函数的作用域，避免不需要的隐式转换。
+
+
+// 1、调用某个函数，但是给函数传入的参数的类型，与函数定义的接收参数类型不匹配（案例：特殊售票窗口）
+// 2、使用某个类型的对象，调用某个方法，而这个方法并不存在于该类型时（案例：超人变身）
+// 3、使用某个类型的对象，调用某个方法，虽然该类型有这个方法，但是给方法传入的参数类型，与方法定义的接收参数的类型不匹配（案例：特殊售票窗口加强版）
+
+// 案例：特殊售票窗口加强版
+class TicketHouse {
+  var ticketNumber = 0
+  def buySpecialTicket(p: SpecialPerson) = {
+    ticketNumber += 1
+    "T-" + ticketNumber
+  }
+}
+
+// 所谓的隐式参数，指的是在函数或者方法中，定义一个用implicit修饰的参数，此时Scala会尝试找到一个指定类型的，用implicit修饰的对象，即隐式值，并注入参数。
+// Scala会在两个范围内查找：一种是当前作用域内可见的val或var定义的隐式变量；一种是隐式参数类型的伴生对象内的隐式值
+
+// 案例：考试签到
+class SignPen {
+  def write(content: String) = println(content)
+}
+implicit val signPen = new SignPen
+
+def signForExam(name: String) (implicit signPen: SignPen) {
+  signPen.write(name + " come to exam in time.")
+}
+
+
+////////////////////////////
+// Scala提供了Actor trait来让我们更方便地进行actor多线程编程，就Actor trait就类似于Java中的Thread和Runnable一样，是基础的多线程基类和接口。我们只要重写Actor trait的act方法，即可实现自己的线程执行体，与Java中重写run方法类似。
+// 此外，使用start()方法启动actor；使用!符号，向actor发送消息；actor内部使用receive和模式匹配接收消息
+
+// 案例：Actor Hello World
+import scala.actors.Actor
+
+class HelloActor extends Actor {
+  def act() {
+    while (true) {
+      receive {
+        case name: String => println("Hello, " + name)
+      }
+    }
+  }
+}
+
+val helloActor = new HelloActor
+helloActor.start()
+helloActor ! "leo"
+
+
+// Scala的Actor模型与Java的多线程模型之间，很大的一个区别就是，Scala Actor天然支持线程之间的精准通信；即一个actor可以给其他actor直接发送消息。这个功能是非常强大和方便的。
+// 要给一个actor发送消息，需要使用“actor ! 消息”的语法。在scala中，通常建议使用样例类，即case class来作为消息进行发送。然后在actor接收消息之后，可以使用scala强大的模式匹配功能来进行不同消息的处理。
+// 案例：用户注册登录后台接口
+case class Login(username: String, password: String)
+case class Register(username: String, password: String)
+class UserManageActor extends Actor {
+  def act() {
+    while (true) {
+      receive {
+        case Login(username, password) => println("login, username is " + username + ", password is " + password)
+        case Register(username, password) => println("register, username is " + username + ", password is " + password)
+      }
+    }
+  }
+}
+val userManageActor = new UserManageActor
+userManageActor.start()
+userManageActor ! Register("leo", "1234"); userManageActor ! Login("leo", "1234")
+
+
+
+// 如果两个Actor之间要互相收发消息，那么scala的建议是，一个actor向另外一个actor发送消息时，同时带上自己的引用；其他actor收到自己的消息时，直接通过发送消息的actor的引用，即可以给它回复消息。
+// 案例：打电话
+case class Message(content: String, sender: Actor)
+class LeoTelephoneActor extends Actor {
+  def act() {
+    while (true) {
+      receive {
+        case Message(content, sender) => { println("leo telephone: " + content); sender ! "I'm leo, please call me after 10 minutes." }
+      }
+    }
+  }
+}
+class JackTelephoneActor(val leoTelephoneActor: Actor) extends Actor {
+  def act() {
+    leoTelephoneActor ! Message("Hello, Leo, I'm Jack.", this)
+    receive {
+      case response: String => println("jack telephone: " + response)
+    }
+  }
+}
+
+// 默认情况下，消息都是异步的；但是如果希望发送的消息是同步的，即对方接受后，一定要给自己返回结果，那么可以使用!?的方式发送消息。即val reply = actor !? message。
+
+// 如果要异步发送一个消息，但是在后续要获得消息的返回值，那么可以使用Future。即!!语法。val future = actor !! message。val reply = future()。
+
+
+
+
+
+
+
