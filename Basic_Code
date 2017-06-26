@@ -1,0 +1,24 @@
+import scala.collection.mutable.ArrayBuffer
+
+def sum(nums:Int*) = {
+    var res=0
+    for(num<-nums) {res+=num}
+    res
+    print(res)
+}
+
+def sum2()={
+    
+}
+
+//sum(1 to 5: _*)
+
+//val a= new Array[Int](10)
+//print(a)
+
+//val a=Array("sdf","wer")
+//print(a(1))
+
+val a= Array(1,2,3,4,5)
+val a2=for(ele<-a) yield ele*ele
+print(a2)
