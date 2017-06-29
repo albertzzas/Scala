@@ -1,0 +1,1067 @@
+113Scala编程进阶： Scaladoc的使用
+
+
+Scaladoc是什么： scala api文档，包含了scala所有的api以及使用说明， class、 object、 trait、
+function、 method、 implicit等
+为什么要查阅Scaladoc：如果只是写一些普通的Scala程序，课程中讲解（Scala编程详解）的
+内容基本够用了；但是如果（在现在，或者未来，实际的工作环境中）要编写复杂的scala程
+序，那么还是需要参考Scaladoc的。（纯粹用scala开发spark应用程序，应该不会特别复杂；
+用scala构建类似于spark的公司内的分布式的大型系统）
+通过url： http://www.scala-lang.org/api/current/#package，可以在线浏览Scaladoc
+以下是一些Scaladoc使用的tips（小贴士，小备注）：
+1、直接在左上角的搜索框中，搜索你需要的寻找的包、类即可
+2、 O和C，分别代表了某个类的伴生对象以及伴生类的概念
+3、标记为implicit的方法，代表的是隐式转换
+4、举例：搜索StringOps，可以看到String的增强类， StringOps的所有方法说明
+114Scala编程进阶：跳出循环语句的3种方法
+
+
+1、基于boolean类型的控制变量
+2、使用嵌套函数以及return
+3、使用Breaks类的break方法
+三种方法
+while循环：
+var flag = true
+var res = 0
+var n = 0
+while(flag) {
+res += n
+n += 1
+if (n == 5) {
+flag = false
+}
+}
+方法一：使用boolean控制变量
+for循环：（高级for循环，加上了if守卫）
+var flag = true
+var res = 0
+for (i <- 0 until 10 if flag) {
+res += i
+if (i == 4) flag = false
+}
+方法一：使用boolean控制变量
+def add_outer() = {
+var res = 0
+def add_inner() {
+for (i <- 0 until 10) {
+if (i == 5) {
+return
+}
+res += i
+}
+}
+add_inner()
+res
+}
+方法二：在嵌套函数中使用return
+跟java里面的break比较类似，相对来说，比较灵活好用；与breakable代码块配合使用
+import scala.util.control.Breaks._
+var res = 0
+breakable {
+for (i <- 0 until 10) {
+if (i == 5) {
+break;
+}
+res += i
+}
+}
+方法三：使用Breaks对象的break方法
+
+
+115Scala编程进阶：多维数组、 Java数组与Scala数组的隐式转换
+
+
+什么是多维数组？：数组的元素，还是数组，数组套数组，就是多维数组
+构造指定行与列的二维数组： Array.ofDim方法
+val multiDimArr1 = Array.ofDim[Double](3, 4)
+multiDimArr1(0)(0) = 1.0
+构造不规则多维数组：
+val multiDimArr2 = new Array[Array[Int]](3)
+multiDimArr2(0) = new Array[Int] (1)
+multiDimArr2(1) = new Array[Int] (2)
+multiDimArr2(2) = new Array[Int] (3)
+multiDimArr2(1)(1) = 1
+多维数组
+Scala代码中，直接调用JDK（Java）的API，比如调用一个Java类的方法，势必可能会传入Java类型的list；
+Scala中构造出来的list，其实是ArrayBuffer；你直接把Scala的ArrayBuffer传入Java接收ArrayList的方法，肯定
+不行。
+import scala.collection.JavaConversions.bufferAsJavaList
+import scala.collection.mutable.ArrayBuffer
+val command = ArrayBuffer("javac", "C:\\Users\\Administrator\\Desktop\\HelloWorld.java")
+val processBuilder = new ProcessBuilder(command)
+val process = processBuilder.start()
+val res = process.waitFor()
+import scala.collection.JavaConversions.asScalaBuffer
+import scala.collection.mutable.Buffer
+val cmd: Buffer[String] = processBuilder.command()
+Java数组与Scala数组缓冲的隐式转换
+
+116Scala编程进阶： Tuple拉链操作、 Java Map与Scala Map的隐式转换
+
+
+Tuple拉链操作指的就是zip操作
+zip操作，是Array类的方法，用于将两个Array，合并为一个Array
+比如Array(v1)和Array(v2)，使用zip操作合并后的格式为Array((v1,v2))
+合并后的Array的元素类型为Tuple
+val students = Array("Leo", "Jack", "Jen")
+val scores = Array(80, 100, 90)
+val studentScores = students.zip(scores)
+for ((student, score) <- studentScores)
+println(student + " " + score)
+如果Array的元素类型是个Tuple，调用Array的toMap方法，可以将Array转换为Map
+studentScores.toMap
+Tuple拉链操作
+import scala.collection.JavaConversions.mapAsScalaMap
+val javaScores = new java.util.HashMap[String, Int]()
+javaScores.put("Alice", 10)
+javaScores.put("Bob", 3)
+javaScores.put("Cindy", 8)
+val scalaScores: scala.collection.mutable.Map[String, Int] = javaScores
+import scala.collection.JavaConversions.mapAsJavaMap
+import java.awt.font.TextAttribute._
+val scalaAttrMap = Map(FAMILY -> "Serif", SIZE -> 12)
+val font = new java.awt.Font(scalaAttrMap)
+Java Map与Scala Map的隐式转换
+
+
+117Scala编程进阶：扩大内部类作用域的2种方法、内部类获取外部类引用
+
+import scala.collection.mutable.ArrayBuffer
+class Class {
+class Student(val name: String)
+val students = new ArrayBuffer[Student]
+def register(name: String) = {
+new Student(name)
+}
+}
+val c1 = new Class
+val leo = c1.register("leo")
+c1.students += leo
+val c2 = new Class
+val jack = c2.register("jack")
+c1.students += jack
+内部类的作用域：外部类对象
+object Class {
+class Student(val name: String)
+}
+class Class {
+val students = new ArrayBuffer[Class.Student]
+def register(name: String) = {
+new Class.Student(name)
+}
+}
+val c1 = new Class
+val leo = c1.register("leo")
+c1.students += leo
+val c2 = new Class
+val jack = c2.register("jack")
+c1.students += jack
+扩大内部类作用域：伴生对象
+class Class {
+class Student(val name: String)
+val students = new ArrayBuffer[Class#Student]
+def register(name: String) = {
+new Student(name)
+}
+}
+val c1 = new Class
+val leo = c1.register("leo")
+c1.students += leo
+val c2 = new Class
+val jack = c2.register("jack")
+c1.students += jack
+扩大内部类作用域：类型投影
+class Class(val name: String) { outer =>
+class Student(val name: String) {
+def introduceMyself = "Hello, I'm " + name + ", I'm very happy to join class " + outer.name
+}
+def register(name: String) = {
+new Student(name)
+}
+}
+val c1 = new Class("c1")
+val leo = c1.register("leo")
+leo.introduceMyself
+
+遍历一个文件中的每一行
+
+必须导入scala.io.Source类: import scala.io.Source
+
+方法一: 使用Source.getLines返回的迭代器
+val source = Source.fromFile("C://Users//Administrator//Desktop//test.txt", "UTF-8")
+val lineIterator = source.getLines
+for (line <- lineIterator) println(line)
+
+方法二: 将Source.getLines返回的迭代器，转换成数组
+
+这里说明一点: 一个BufferedSource对象的getLines方法，只能调用一次，一次调用完之后，遍历了迭代器里所有的内容，就已经把文件里的内容读取完了
+如果反复调用source.getLines，是获取不到内容的
+此时，必须重新创建一个BufferedSource对象
+
+val source = Source.fromFile("C://Users//Administrator//Desktop//test.txt", "UTF-8")
+val lines = source.getLines.toArray
+for(line <- lines) println(line)
+
+方法三: 调用Source.mkString，返回文本中所有的内容
+val source = Source.fromFile("C://Users//Administrator//Desktop//test.txt", "UTF-8")
+val lines = source.mkString
+
+使用完BufferedSource对象之后，调用BufferedSource.close方法，关闭IO流资源
+
+-------------------------------------------------------------------------------------------------------
+118为什么要有package的概念？
+
+因为要对多个同名的类进行命名空间的管理，避免同名类发生冲突
+比如说，scala.collection.mutable.Map和scala.collection.immutable.Map
+
+----------------------------------------------------------------------------------------------------------------------------------
+
+package定义的第一种方式: 多层级package定义（比较差的做法，一般不这么干）
+
+package com {
+	package ibeifeng {
+		package scala {
+			class Test {}
+		}
+	}
+}
+
+package定义的第二种方式: 串联式package定义（也不怎么样，一般也不这么干）
+
+package com.ibeifeng.scala {
+	package service {
+		class Test {}
+	}
+}
+
+package定义的第三种方式: 文件顶部package定义
+
+package com.ibeifeng.scala.service
+
+class Test {
+
+}
+
+package定义的第四种方式: IDE自动生成包
+
+----------------------------------------------------------------------------------------------------------------------------------
+
+package特性一: 同一个包定义，可以在不同的scala源文件中的; 一个scala源文件内，可以包含两个包
+
+Test1.scala
+
+package com {
+	package ibeifeng {
+		package scala {
+			class Test1
+		}
+	}
+}
+
+Test2.scala
+
+package com {
+	package ibeifeng {
+		package scala {
+			class Test2
+		}
+	}
+}
+
+Test3.scala
+
+package com {
+	package ibeifeng {
+		package scala1 {
+			class Test
+		}
+	}
+}
+
+package com {
+	package ibeifeng {
+		package scala2 {
+			class Test
+		}
+	}
+}
+
+package特性二: 子包中的类，可以访问父包中的类
+
+Test.scala
+
+package com {
+	package ibeifeng {
+		package scala {
+			object Utils {
+				def isNotEmpty(str: String): Boolean = str != null && str != ""
+			}
+			
+			class Test
+		
+			package service {
+				class MyService {
+					def sayHello(name: String) {
+						if(Utils.isNotEmpty(name)) {
+							println("Hello, " + name)
+						} else {
+							println("Who are you?")  
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+object MainClass {
+  def main(args: Array[String]): Unit = {
+    val service = new com.ibeifeng.scala.service.MyService
+    service.sayHello("leo")  
+    service.sayHello("")  
+  }
+}
+
+package特性三: 相对包名与绝对包名
+
+package com {
+	package ibeifeng {
+		package scala {
+			object Utils {
+				def isNotEmpty(str: String): Boolean = str != null && str != ""
+			}
+			
+			class Test
+			
+			package collection {}
+			
+			package service {
+				class MyService {
+					// 这会报错，默认使用相对报名，从com.ibeifeng.scala.collection包中，寻找mutable包下的ArrayBuffer类
+					// 但是找不到，所以会报错
+					// val names = new scala.collection.mutable.ArrayBuffer[String]
+					
+					// 正确的做法是使用_root_，引用绝对包名
+					val names = new _root_.scala.collection.mutable.ArrayBuffer[String]
+					
+					def sayHello(name: String) {
+						if(Utils.isNotEmpty(name)) {
+							println("Hello, " + name)
+						} else {
+							println("Who are you?")  
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+package特性四: 定义package对象（比较少）
+
+package内的成员，可以直接访问package对象内的成员
+
+package com.ibeifeng.scala
+
+package object service {
+	val defaultName = "Somebody"
+}
+
+package service {
+	class MyService {
+		def sayHello(name: String) {
+			if(name != null && name != "") {
+				println("Hello, " + name)
+			} else {
+				println("Hello, " + defaultName) 
+			}
+		}
+	}
+}
+
+package特性五: package可见性
+
+package com.ibeifeng.scala
+
+class Person {
+	private[scala] val name = "leo"
+	private[ibeifeng] val age = 25
+}
+
+----------------------------------------------------------------------------------------------------------------------------------
+
+import
+
+如果没有import，那么。。。你每次创建某个包下的类的对象，都得用new com.ibeifeng.scala.service.MyService这种冗长的格式。。。
+所以如果用了import，那么。。。你只要先import com.ibeifeng.scala.service.MyService，然后再new MyService，即可。。。
+
+import com.ibeifeng.scala.service.MyService;
+
+object MainClass {
+  def main(args: Array[String]): Unit = {
+    val service = new MyService
+    service.sayHello("leo")  
+    service.sayHello("")  
+  }
+}
+
+import特性一: 用import com.ibeifeng.scala.service._这种格式，可以导入包下所有的成员
+
+import特性二: scala与java不同之处在于，任何地方都可以使用import，比如类内、方法内，这种方式的好处在于，可以在一定作用域范围内使用导入
+
+object MainClass {
+  def main(args: Array[String]): Unit = {
+    import com.ibeifeng.scala.service._
+    
+    val service = new MyService
+    service.sayHello("leo")  
+    service.sayHello("")  
+  }
+}
+
+import特性三: 选择器、重命名、隐藏
+
+import com.ibeifeng.scala.service.{ MyService }，仅仅导入java.awt包下的Color和Font类
+import com.ibeifeng.scala.service.{ MyService => MyServiceImpl }，将导入的类进行重命名
+import com.ibeifeng.scala.service.{ MyService => _, _ }，导入java.util包下所有的类，但是隐藏掉HashMap类
+
+import特性四: 隐式导入
+
+每个scala程序默认都会隐式导入以下几个包下所有的成员
+import java.lang._
+import scala._
+import Predef._
+
+
+119重写field的提前定义
+
+默认情况下，如果父类中的构造函数代码，用到了会被子类重写的field; 那么出出现令人意想不到的一幕: 
+1、子类的构造函数（无参）调用父类的构造函数（无参）
+2、父类的构造函数初始化field（结果正确）
+3、父类的构造函数使用field执行其他构造代码，但是此时其他构造代码如果使用了该field，而且field要被子类重写，那么它的getter方法被重写，返回0（比如Int）
+4、子类的构造函数再执行，重写field（结果也正确）
+5、但是此时子类从父类继承的其他构造代码，已经出现了错误了
+
+class Student {
+	val classNumber: Int = 10
+	val classScores: Array[Int] = new Array[Int](classNumber)
+}
+
+class PEStudent {
+	override val classNumber: Int = 3
+}
+
+本来我们期望的是，PEStudent，可以从Student继承来一个长度为3的classScores数组
+结果。。。PEStudent对象，只有一个长度为0的classScores数组
+
+此时只能使用Scala对象继承的一个高级特性: 提前定义，在父类构造函数执行之前，先执行子类的构造函数中的某些代码
+
+class PEStudent extends student {
+	override val classNumber: Int = 3
+} with Student
+
+--------------------------------------------------------------------------------------------------------------------------
+
+Scala的继承层级
+
+这里我们大概知道一下Scala的继承层级，我们写的所有的Scala trait和class，都是默认继承自一些Scala根类的，有一些基础的方法
+
+Scala中，最顶端的两个trait是Nothing和Null，Null trait唯一的对象就是null
+其次是继承了Nothing trait的Any类
+接着Anyval trait和AnyRef类，都继承自Any类
+
+Any类是个比较重要的类，其中定义了isInstanceOf和asInstanceOf等方法，以及equals、hashCode等对象的基本方法
+Any类，有点像Java中的Object基类
+AnyRef类，增加了一些多线程的方法，比如wait、notify/notifyAll、synchronized等，也是属于Java Object类的一部分
+
+--------------------------------------------------------------------------------------------------------------------------
+
+对象相等性
+
+这里，我们要知道，在scala中，你如何判断两个引用变量，是否指向同一个对象实例
+
+AnyRef的eq方法用于检查两个变量是否指向同一个对象实例
+AnyRef的equals方法默认调用eq方法实现，也就是说，默认情况下，判断两个变量相等，要求必须指向同一个对象实例
+
+通常情况下，自己可以重写equals方法，根据类的fields来判定是否相等
+此外，定义equals方法时，也最好使用同样的fields，重写hashCode方法
+
+如果只是想要简单地通过是否指向同一个对象实例，判定变量是否相当，那么直接使用==操作符即可，默认判断null，然后调用equals方法
+
+class Product(val name: String, val price: Double) {
+
+	final override def equals(other: Any) = {
+		val that = other.asInstanceOf[Product]
+		if(that == null) false
+		else name == that.name && price == that.price
+	}
+	
+	final override def hashCode = 13 * name.hashCode + 17 * price.hashCode
+	
+}
+120遍历一个文件中的每一个字符
+
+BufferedSource，也实现了一个Iterator[Char]的这么一个trait
+
+val source = Source.fromFile("C://Users//Administrator//Desktop//test.txt", "UTF-8")
+for(c <- source) print(c)
+
+-------------------------------------------------------------------------------------------------------
+
+从URL以及字符串中读取字符
+
+val source = Source.fromURL("http://www.baidu.com", "UTF-8")
+val source = Source.fromString("Hello World")
+
+-------------------------------------------------------------------------------------------------------
+
+结合Java IO流，读取任意文件
+
+这里说明一点，大家千万不要以为，spark就是会scala就可以了
+也千万不要以为，scala，就是跟java一点关系都没有，甚至于完全可以替代java
+上述说法，都是很荒谬的，都是门外汉才会这么认为
+
+如果你真的深入读了spark的源代码
+真的对scala掌握的很深入，你就会知道一点
+spark的源码实际上是由scala和java共同编写而成的，Java的多线程
+scala，本身的编程语言的功能，就不是特别的强大和完善，比如说，scala甚至不能很方便地写文件，必须依赖于java的io流才可以
+
+所以说，scala，其实主要就是针对某些特定领域的一些复杂系统的，比较适用的一种编程语言而已
+完全无法替代java的，scala和java是相辅相成，荣辱与共的这么一种，共生关系
+
+可以这么跟大家说
+scala还有一种作用，可以用scala，编写spark的作业
+但是问题是，为什么，我们要用java开发hive udf、mapreduce、hbase client、zookeeper client，用Java开发storm的作业
+然后作为一个大数据工程师，偏偏用到spark的时候，一定要用scala开发呢？
+用spark开发作业，用java，个人认为，个人观点，是最合适的，最通用的，最可移植的，最方便维护的
+
+scala，这套课程里，scala编程详解、scala编程进阶
+1、有些公司的技术leader，要求用scala开发spark作业，我也没办法，我是极力反对的; 保证学员，学了这套课程以后，可以用scala去工作和面试
+2、有些同学，可能压根儿不会java; 大多数是上学的时候，主要是搞算法的，或者只会c++，只会python; 这套课程学了，不用会java，那么也可以精通和使用spark
+3、最重要的一点，深入掌握scala所有的初中高级语法，才能透彻和深入的理解和阅读spark的源码
+4、也有，但是很少，就是有些公司，可能会用scala，开发复杂的大型分布式后端系统
+
+案例: 结合java IO流，做一个文件拷贝的案例
+
+import java.io._
+
+val fis = new FileInputStream(new File("C://Users//Administrator//Desktop//test.txt"))
+val fos = new FileOutputStream(new File("C://Users//Administrator//Desktop//test3.txt"))
+
+val buf = new Array[Byte](1024)
+fis.read(buf)
+fos.write(buf, 0, 1024)
+
+fis.close()
+fos.close()
+
+-------------------------------------------------------------------------------------------------------
+
+结合Java IO流，写文件
+
+val pw = new PrintWriter("C://Users//Administrator//Desktop//test4.txt")
+pw.println("Hello World")
+pw.close()
+
+-------------------------------------------------------------------------------------------------------
+
+递归遍历子目录
+
+def getSubdirIterator(dir: File): Iterator[File] = {
+  val childDirs = dir.listFiles.filter(_.isDirectory)
+  childDirs.toIterator ++ childDirs.toIterator.flatMap(getSubdirIterator _)
+}
+
+val iterator = getSubdirIterator(new File("C://Users//Administrator//Desktop"))
+
+for(d <- iterator) println(d)
+
+-------------------------------------------------------------------------------------------------------
+
+序列化以及反序列化（Java序列化和反序列化机制）
+
+如果要序列化，那么就必须让类，有一个@SerialVersionUID，定义一个版本号
+要让类继承一个Serializable trait
+
+@SerialVersionUID(42L) class Person(val name: String) extends Serializable
+val leo = new Person("leo")
+
+import java.io._
+
+val oos = new ObjectOutputStream(new FileOutputStream("C://Users//Administrator//Desktop//test.obj"))
+oos.writeObject(leo)
+oos.close()
+
+val ois = new ObjectInputStream(new FileInputStream("C://Users//Administrator//Desktop//test.obj"))
+val restoredLeo = ois.readObject().asInstanceOf[Person]
+restoredLeo.name
+
+121偏函数，是一种高级的函数形式
+
+简单来说，偏函数是什么，其实就是没有定义好明确的输入参数的函数，函数体就是一连串的case语句
+
+一般的函数
+
+def getStudentGrade(name: String) = {
+	...
+}
+
+偏函数是PartialFunction[A, B]类的一个实例
+这个类有两个方法，一个是apply()方法，直接调用可以通过函数体内的case进行匹配，返回结果; 
+另一个是isDefinedAt()方法，可以返回一个输入，是否跟任何一个case语句匹配
+
+学生成绩查询案例
+
+val getStudentGrade: PartialFunction[String, Int] = { 
+	case "Leo" => 90; case "Jack" => 85; case "Marry" => 95 
+}
+
+getStudentGrade("Leo")
+getStudentGrade.isDefinedAt("Tom")
+122scala执行外部命令
+
+咱们的scala程序，实际上，写好以后，跑起来，关键是，跑在哪里？
+scala程序是运行在java虚拟机中的，也就是咱们平时常说的jvm，所以我们之前能够看到，scala可以直接调用jdk
+jdk: java development kit，java基础的开发api
+
+scala的程序，是运行在一个进程中的
+运行在什么进程中？是运行在jvm虚拟机进程中的
+
+比如说，如果说，我们的scala程序，希望去执行scala所在进程之外的，比如说，本地操作系统的一个命令
+也许执行的本地操作系统的命令，会启动一个新的进程，也许也不会
+但是，如果想要实现这样的效果和功能，scala能不能够做到？
+
+这个是可以的
+scala实际上，是提供了这样的支持的
+也就是说，咱们的scala程序，运行在一个独立的进程中，但是可以随心所欲地执行外部操作系统的其他命令
+甚至是说，启动其他的进程
+
+案例: 使用scala编译和执行外部的java程序
+
+import sys.process._
+
+"javac HelloWorld.java" !
+"java HelloWorld" !
+123scala的正则表达式支持
+
+正则表达式是什么？
+
+一种语法，用一个表达式，来匹配一系列的字符串
+[a-z]+: 一个或多个a~z范围的26个小写英文字母，比如hello，world
+
+强调一点，咱们不会去给大家详细介绍正则表达式的语法
+
+正则表达式这个东西，语法比较多
+有兴趣，有需要的话，那么建议直接百度一下，自己看一下介绍，就知道是怎么回事了
+大致学习一下正则表达式的语法即可
+
+我们这里呢，讲解一下scala中，对这个正则表达式的支持
+
+---------------------------------------------------------------------------------
+
+定义一个正则表达式，使用String类的r方法
+此时返回的类型是scala.util.matching.Regex类的对象
+val pattern1 = "[a-z]+".r
+
+拿到一个正则表达式以后，我们一般会用它来做什么事情？
+比如，我们会用正则表达式来匹配一些字符串，比如来看看，某个字符串是否符合表达式规定的范围之内
+比如，从一个长的字符串中，提取出来，匹配正则表达式的各个部分
+
+val str = "hello 123 world 456"
+
+获取一个字符串中，匹配正则表达式的部分，使用findAllIn，会获取到一个Iterator，迭代器
+然后就可以去遍历各个匹配正则的部分，去进行处理
+for (matchString <- pattern1.findAllIn(str)) println(matchString)
+
+同理，使用findFirstIn，可以获取第一个匹配正则表达式的部分
+pattern1.findFirstIn(str)
+
+使用replaceAllIn，可以将匹配正则的部分，替换掉
+pattern1.replaceFirstIn("hello world", "replacement")
+
+使用replaceFirstIn，可以将第一个匹配正则的部分，替换掉
+pattern1.replaceAllIn("hello world", "replacement")
+124提取器
+
+apply方法
+
+伴生类和伴生对象的概念，companion class和companion object
+伴生对象里面，可以定义一个apply方法
+直接调用类(参数)，方式，就相当于在调用apply方法
+此时在apply方法中，通常来说（也不一定），会创建一个伴生类的对象，返回回去
+
+这种方式，有一个好处，创建对象呢，非常的方便
+不要每次都是new 类(参数)，类(参数)
+
+提取器
+
+unapply方法
+
+和apply方法，顾名思义，那就是反过来
+apply方法，可以理解为，接收一堆参数，然后返回一个对象
+unapply方法，可以理解为，接收一个字符串，解析成一个对象的各个字段
+
+提取器就是一个包含了unapply方法的对象，跟apply方法正好相反
+apply方法，是接收一堆参数，然后构造出来一个对象
+unapply方法，是接收一个字符串，然后解析出对象的属性值
+
+class Person(val name: String, val age: Int)
+
+object Person {
+
+  def apply(name: String, age: Int) = new Person(name, age)
+  
+  def unapply(str: String) = {
+    val splitIndex = str.indexOf(" ")
+    if (splitIndex == -1) None
+
+    else Some((str.substring(0, splitIndex), str.substring(splitIndex + 1)))
+  }
+  
+}
+
+val Person(name, age) = "leo 25"
+
+name
+age
+125样例类的提取器
+
+scala中的样例类，说白了，也很简单
+类似于java中的javabean，java中的JavaBean，是什么东东？
+
+包含了一堆属性，field; 每个field都有一对getter和setter方法
+
+public class Person {
+	
+	private String name;
+	private int age;
+	
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public int getAge() {
+		return age;
+	}
+	public void setAge(int age) {
+		this.age = age;
+	}
+	
+}
+
+scala中的样例类，默认就是提供apply方法和unapply方法的
+
+case class Person(name: String, age: Int)
+
+val p = Person("leo", 25)
+
+p match {
+	case Person(name, age) => println(name + ": " + age)
+}
+126只有一个参数的提取器
+
+之前，已经跟大家讲解过普通的提取器
+相当于是，比如说，接收一个字符串，作为参数
+然后从字符串里面解析出来多个字段值，然后将多个字段值封装在一个tuple中
+作为Some类型的对象，返回
+
+现在我们来想一下，如果你的类只有一个字段
+字符串里面只有一个字段
+解析出来的一个字段，是没有办法放在tuple中的，因为scala中的tuple，规定了，必须要两个以及两个以上的值
+
+这个时候，在提取器，unapply方法中，只能将一个字段值，封装在Some对象中，直接返回
+
+class Person(val name: String)
+
+object Person {
+  def unapply(input: String): Option[String] = Some(input)
+}
+
+val Person(name) = "leo"
+127什么是注解？
+
+注解其实说白了，就是在我们的代码中，加入一些特殊的标记
+
+特殊的标记大概长什么样子呢？
+我们之前学过一个很常用，和很经典的一个注解，其实就是@BeanProperty，让编译器自动生成属性的JavaBean风格的getter和setter方法
+除此之外，还在《文件操作实战详解》那一讲，讲过一个序列化的这个东西，@SerialUID（可能是错误的），指定一个序列化的版本号
+
+注解是用来干嘛的？
+
+然后我们的scala编译器，就可以在编译的时候，在碰到注解的时候，做一些特殊的操作。一个非常经典的例子就是
+@BeanProperty注解，我们之前讲解过，给某个field添加了这个注解之后，scala编译器就会给field编译出新的JavaBean风格的getter和setter方法
+
+------------------------------------------------------------------------
+
+scala中，在哪些地方可以添加注解呢？
+
+scala中，可以给类、方法、field、local variable、constructor / method / function parameter添加注解
+而且scala是支持给某个目标添加多个注解的
+
+这里有一些特例：如果要给类的主构造函数添加注解，那么需要在构造函数前添加注解，并加上一对圆括号
+
+比如说
+
+class Person @Unchecked() (val name: String, val age: Int)
+
+还可以给表达式添加注解，此时需要在表达式后面加上冒号以及注解，比如
+
+val scores = Map("Leo" -> 90, "Jack" -> 60)
+(scores.get("Leo"): @unchecked) match { case score => println(score) }
+
+除此之外，还可以给类型参数和变量的类型定义添加注解
+
+------------------------------------------------------------------------
+
+Scala中开发注解
+
+要自己动手开发一个注解，就必须扩展Annotation trait，比如
+
+class Test extends annotation.Annotation
+
+@Test
+class myTest
+
+------------------------------------------------------------------------
+
+注解的参数
+
+注解中，是可以有参数的，比如
+
+class Test(var timeout: Int) extends annotation.Annotation
+@Test(timeout = 100) class myTest
+
+如果注解的参数是value的话，那么也可以不用指定注解的参数名，比如
+
+class Test(var value: String) extends annotation.Annotation
+
+128dscala提供的常用注解
+其实里面很多都是针对java中的概念和概念提供的
+
+跟大家提示一下，再次证明了，你搞scala，真想搞好的话，先学和精通java
+scala和java的关系是唇齿相依的
+scala依赖java
+java并不依赖scala
+
+scala中，常用的一些注解，全部是针对java的一些概念
+
+所以呢，在这里我们没办法给大家详细讲解java的概念，就直接介绍scala中针对java的一些注解
+
+@volatile var name = "leo"			轻量级的java多线程并发安全控制
+
+jvm，java虚拟机中，可以有多个线程
+每个线程都有自己的工作区，还有一块儿所有线程共享的工作区
+每次一个线程拿到一个公共的变量，都需要从共享区中拷贝一个副本到自己的工作区中使用，和修改
+然后修改完以后，再在一个合适的时机，将副本的值，写回到共享区中
+
+这里就会出现一个多线程并发访问安全的问题
+多个线程如果同时拷贝了变量副本，都做了不同的修改
+然后依次将副本修改的值，写回到共享区中，会依次覆盖掉之前的一些副本值
+就会出现变量的值，是不符合预期的
+咱们的系统，出现了错误和bug
+
+volatile关键字修饰的变量
+它可以保证，一个线程在从共享区获取一个变量的副本时，都会强制刷新一下这个变量的值
+保证自己获取到的变量的副本值是最新的
+所以这样子做呢，是一种轻量级的多线程并发访问控制办法
+
+但是也不是百分之百保险的，还是有可能会出现错误的风险
+
+@transient var name = "leo"		瞬态字段，不会序列化这个字段
+
+之前讲序列化，默认会将一个对象中所有的字段的值，都序列化到磁盘文件中去
+然后反序列化的时候，还可以获取这些字段的值
+加了transient的字段，是瞬态的，序列化的时候，不会序列化这个字段
+反序列化的时候，这个字段也就没有值了
+
+@SerialVersionUID(value)		标记类的序列化版本号
+
+序列化版本号，这个什么意思
+如果我们将一个类的对象序列化到磁盘文件上了
+结果过了一段时间以后，这个类在代码中改变了，此时如果你想将磁盘文件中的对象反序列化回来
+就会报错，因为你的序列化的对象的结构与代码中的类结构已经不一样了
+
+针对这种问题，就应该有一个序列化版本号
+如果你的类改变了，就重新生成一个序列化版本号
+反序列化的时候，就会发现序列化类型的版本号和代码中的类的版本号，不一样
+
+@native						标注用c实现的本地方法
+@throws(classOf[Exception]) def test() {}	给方法标记要抛出的checked异常
+@varargs def test(args: String*) {}		标记方法接收的是变长参数
+@BeanProperty				标记生成JavaBean风格的getter和setter方法
+@BooleanBeanProperty			标记生成is风格的getter方法，用于boolean类型的field
+@deprecated(message = "")		让编译器提示警告
+@unchecked						让编译器提示类型转换的警告
+
+129scala中定义xml
+
+scala对xml有很好的支持，可以直接在scala代码中定义一个xml文档元素
+val books = <books><book>my first scala book</book></books>
+此时doc的类型是scala.xml.Elem，也就是一个xml元素
+
+scala还可以直接定义多个同级别的xml元素
+val books = <book>my first scala book</book><book>my first spark book</book>
+此时doc的类型是scala.xml.NodeBuffer，也就是一个xml节点序列
+
+---------------------------------------------------------------------------------
+
+XML节点类型
+
+Node类是所有XML节点类型的父类型，两个重要的子类型是Text和Elem。
+
+Elem表示一个XML元素，也就是一个XML节点。scala.xml.Elem类型的label属性，返回的是标签名，child属性，返回的是子元素。
+
+scala.xml.NodeSeq类型，是一个元素序列，可以用for循环，直接遍历它。
+
+可以通过scala.xml.NodeBuffer类型，来手动创建一个节点序列
+
+val booksBuffer = new scala.xml.NodeBuffer
+booksBuffer += <book>book1</book>
+booksBuffer += <book>book2</book>
+val books: scala.xml.NodeSeq = booksBuffer
+
+---------------------------------------------------------------------------------
+
+xml元素的属性
+
+scala.xml.Elem.attributes属性，可以返回这儿xml元素的属性，是Seq[scala.xml.Node]类型的，继续调用text属性，可以拿到属性的值
+
+val book = <book id=“1” price=“10.0”>book1</book>
+val bookId = book.attributes(“id”).text
+
+还可以遍历属性
+
+for(attr <- book.attributes) println(attr)
+
+还可以调用book.attributes.asAttrMap，获取一个属性Map
+
+130在xml中嵌入scala代码
+
+val books = Array("book1", "book2")
+
+<books><book>{ books(0) }</book><book>{ books(1) }</book></books>
+<books>{ for (book <- books) yield <book>{book}</book> }</books>
+
+还可以在xml属性中嵌入scala代码
+
+<book id={ books(0) }>{ books(0) }</book>
+
+131修改xml元素
+
+默认情况下，scala中的xml表达式是不可改变的；如果要修改xml元素的话，必须拷贝一份再修改
+
+val books = <books><book>book1</book></books>
+
+添加一个子元素
+val booksCopy = books.copy(child = books.child ++ <book>book2</book>)
+
+val book = <book id="1">book1</book>
+
+import scala.xml._
+
+修改一个属性
+val bookCopy = book % Attribute(null, "id", "2", Null)
+
+添加一个属性
+val bookCopy = book % Attribute(null, "id", "2", Attribute(null, "price", "10.0", Null))
+
+说点闲话
+如果大家真的对java比较精通的话
+然后过来学习这个scala，就会发现有个特点
+
+java的功能是非常强大的
+但是，从各个方面来看，比如io、xml操作、第三方类库的支持、socket、gui界面编程、jdbc访问数据库等等，scala都比java差很多
+
+之所以现在scala有点火，有些人推崇这个scala
+其实主要是因为spark是用scala作为主要的语言开发的（但是spark底层的源码，其实都是java）
+类加载器、线程、反射、线程池等等这些东西，全部都是java底层，外部命令的执行（ProcessBuilder）
+
+132加载和写入外部xml文件
+
+import scala.xml._
+import java.io._
+
+使用scala的XML类加载
+val books = XML.loadFile("C://Users//Administrator//Desktop//books.xml")
+
+使用Java的FileInputStream类加载
+val books = XML.load(new FileInputStream("C://Users//Administrator//Desktop//books.xml"))
+
+使用Java的InputStreamReader类指定加载编码
+val books = XML.load(new InputStreamReader(new FileInputStream("C://Users//Administrator//Desktop//books.xml"), "UTF-8"))
+
+将内存中的xml对象，写入外部xml文档
+XML.save("C://Users//Administrator//Desktop//books2.xml", books)
+133集合元素操作
+
+col :+ ele			将元素添加到集合尾部		Seq
+ele +: col			将元素添加到集合头部		Seq
+col + ele			在集合尾部添加元素			Set、Map
+col + (ele1, ele2)	将其他集合添加到集合的尾部	Set、Map
+col - ele			将元素从集合中删除			Set、Map、ArrayBuffer
+col - (ele1, ele2)	将子集合从集合中删除		Set、Map、ArrayBuffer
+col1 ++ col2		将其他集合添加到集合尾部	Iterable
+col2 ++: col1		将其他集合添加到集合头部	Iterable
+ele :: list			将元素添加到list的头部		List
+list2 ::: list1		将其他list添加到list的头部		List
+list1 ::: list2		将其他list添加到list的尾部		List
+set1 | set2			取两个set的并集			Set
+set1 & set2			取两个set的交集			Set
+set1 &~ set2		取两个set的diff				Set
+col += ele			给集合添加一个元素			可变集合
+col += (ele1, ele2)	给集合添加一个集合			可变集合
+col ++= col2		给集合添加一个集合			可变集合
+col -= ele			从集合中删除一个元素		可变集合
+col -= (ele1, ele2)	从集合中删除一个子集合		可变集合
+col —= col2			从集合中删除一个子集合		可变集合
+ele +=: col			向集合头部添加一个元素		ArrayBuffer
+col2 ++=: col		向集合头部添加一个集合		ArrayBuffer
+134集合的常用方法
+
+head、last、tail
+length、isEmpty
+sum、max、min
+count、exists、filter、filterNot
+takeWhile、dropWhile
+take、drop、splitAt
+takeRight、dropRight
+sclie
+contains、startsWith、endsWith
+indexOf
+intersect、diff
+
+135scala集合map操作实战详解
+
+map操作，一对一映射
+
+val scoreMap = Map("leo" -> 90, "jack" -> 60, "tom" -> 70)
+val names = List("leo", "jack", "tom")
+names.map(scoreMap(_))
+
+flatMap操作，一对多映射
+
+val scoreMap = Map("leo" -> List(80, 90, 60), "jack" -> List(70, 90, 50), "tom" -> List(60,70,40))
+names.map(scoreMap(_))
+names.flatMap(scoreMap(_))
+
+collect操作，结合偏函数使用
+
+"abc".collect { case 'a' => 1; case 'b' => 2; case 'c' => 3 }
+
+foreach操作，遍历
+
+names.foreach(println _)
+136reduce操作fold操作
+
+List(1, 2, 3, 4).reduceLeft(_ - _)
+List(1, 2, 3, 4).reduceRight(_ - _)
+
+fold操作
+
+List(1, 2, 3, 4).foldLeft(10)(_ - _)
+List(1, 2, 3, 4).foldRight(10)(_ - _)
+
+
+
