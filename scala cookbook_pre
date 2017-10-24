@@ -1,0 +1,12 @@
+for (i<-Array(1,2,3)) println(i)
+
+Array(1,2,3).map(_ *2)
+
+
+val nums=List(1,2,3,4,5).filter(_ <4)
+
+val nums=List(1,2,3,4,5).filter(_ <4).map(_ *2)
+
+val hello="hello world"
+
+Array(1,2,3).foreach(println)
