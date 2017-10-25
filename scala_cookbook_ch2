@@ -1,0 +1,140 @@
+class ch2 {
+
+}
+//数据类型的精确范围值得查看：
+//数据类型的精确范围值得查看：
+
+Short.MinValue
+
+Short.MaxValue
+
+Int.MinValue
+
+Int.MaxValue
+//复数和日期类型
+//复数–>Scala自带的math类库；
+//日期–>Joda Time
+//
+//从字符串到数值
+//把一个字符串转换成一个Scala的数值类型–>使用String的to*方法
+
+val s = "100"
+
+s.toInt
+
+s.toDouble
+
+s.toFloat
+
+s.toLong
+
+s.toShort
+
+s.toByte
+
+val b = BigInt("1")
+
+val b = BigDecimal("1")
+//处理除十进制之外的数
+Integer.parseInt("1", 2)
+
+Integer.parseInt("10", 2)
+
+Integer.parseInt("100", 2)
+
+Integer.parseInt("1", 8)
+
+Integer.parseInt("10", 8)
+//数值类型转换
+//把一个数值类型转换成另一中数值类型，不像Java中的强制类型转换，使用在所有数值类型上都可用的to*方法。
+
+19.45.toInt
+
+19.toFloat
+
+19.toDouble
+
+19.toLong
+//重载默认数值类型
+//对一个数值型变量赋值时，Scala会自动把数值类型赋值给变量。定义一个数值类型变量时，可以重载其默认类型。
+
+val a = 1
+
+val a = 1d
+
+val a = 1f
+
+val a = 1000L
+
+//也可以给变量增加类型声明
+
+val a = 0:Byte
+
+val a = 0:Int
+
+val a = 0:Short
+
+val a = 0:Double
+
+val a = 0:Float
+//在指定变量的数据类型时，推荐使用如下格式：
+
+val a = 0:Float
+
+val a:Byte = 1
+类型归属—-java中的向上转型
+val s = "Dave"
+s: String = Dave
+
+val p = s:Object
+//Scala中的++和–
+//Scala中声明为val的字段是不可变的，它们不能递减或者递增，但是声明为var的Int类型变量可以通过+=，-=方法来修改。
+var a = 1
+
+a += 1
+
+a
+
+print(a)
+a -= 1
+
+print(a)
+//浮点数值的比较
+
+val a = 0.3
+
+val b = 0.1 + 0.2
+//随机数
+//Scala中scala.util.Random生成随机数。
+
+val r = scala.util.Random
+
+r.nextInt
+
+r.nextInt(100)
+//创建一个数值区间、列表或者数组
+//区间
+
+val r = 1 to 10
+// 设置步长
+val r = 1 to 10 by 2
+// for循环中使用区间
+for(i <- 1 to 5) println(i)
+// 使用until来创建区间
+for(i <- 1 until 5) println(i)
+//将区间转换成其他序列
+
+val x = (1 to 10).toArray
+
+val x = (1 to 10).toList
+//格式化呢数值和金额
+//数值格式化
+val pi = scala.math.Pi
+
+println(f"$pi%1.5f")
+// 格式化金额
+val formatter = java.text.NumberFormat.getCurrencyInstance
+
+println(formatter.format(123.456789))
+
+println(formatter.format(12345.6789))
