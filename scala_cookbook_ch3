@@ -1,0 +1,90 @@
+class ch3 {
+
+}
+//for和foreach循环
+//遍历一个集合中的所有元素，对集合中的每个元素进行操作，或者利用现有的集合创建一个新集合。
+val a = Array("apple", "banana", "orange")
+
+for(e <- a) println(e)
+
+//使用for/yield组合可以从输入的集合中生成一个新的集合。
+
+val newArray = for(e <- a) yield e.toUpperCase
+//for循环计数器
+
+for(i <- 0 until 10){
+  | print(i)
+  | }
+//生成器与守卫语句
+
+for(i <- 1 to 3)println(i)
+
+1 to 3
+
+for(i <- 1 to 3) println(i)
+
+1 to 3
+
+for(i <- 1 to 10 if i < 4) println(i)
+//遍历Map集合
+
+val names = Map("fname" -> "Robert",
+  | "lname" -> "Goren")
+
+for((k, v) <- names) println(s"key: $k, value: $v")
+//for循环中使用多个计数器
+
+for(i <- 1 to 2; j <- 1 to 2) println(s"i = $i, j = $j")
+// 对于对个for循环推荐使用大括号的风格
+for{
+  | i <- 1 to 2
+  | j <- 1 to 2
+  | }println(s"i = $i, j = $j")
+//for循环为多维数组赋值
+
+val array = Array.ofDim[Int](2, 2)
+
+for{
+  | i <- 0 to 1
+  | j <- 0 to 1
+  | }println(s"($i)($j) = ${array(i)(j)}")
+//for循环中嵌入if语句，if语句又叫做过滤器
+
+for{
+  | i <- 1 to 10
+  | if i % 2 == 0
+  | }println(i)
+
+for{
+  | i <- 1 to 10
+  | if i > 3
+  | if i < 6
+  | if i % 2 == 0
+  | }println(i)
+//创建for表达式（for/yield组合）
+//在一个已有的集合上，使用带有yield语句的for循环和算法，生成一个新的集合。
+//除了极个别的情况，for推导不会改变集合的返回类型
+
+val name = Array("chris", "ed", "maurice")
+
+val capName = for(e <- name) yield e.capitalize
+//Scala中没有break和continue关键字，scala.util.control.Breaks类提供了类似的功能。
+//
+//case语句中匹配多个条件
+
+val i = 5
+
+i match {
+| case 1 | 3 | 5 | 7 | 9 => println("odd")
+  | case 2 | 4 | 6 | 8 | 10 => println("even")
+  | }
+//odd
+//try/catch匹配一个或者多个异常
+
+val s = "foo"
+
+try{
+  | val i = s.toInt
+  | }catch{
+  | case e:Exception => e.printStackTrace
+    | }
