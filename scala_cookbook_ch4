@@ -1,0 +1,124 @@
+class ch4 {
+
+}
+//主构造函数
+//Scala中为类创建一个主构造函数和Java中不相同。
+//一个Scala类的主构造函数是以下的组合：
+//
+//构造函数参数
+//在类内部被调用的方法
+//在类内部执行的语句和表达式
+//下面的类说明了在类中的构造函数参数、类字段和语句：
+
+class Person(var firstName: String, var lastName: String) {
+  println("the contructor begins")
+
+  // some class field
+  private val HOME = System.getProperty("use.home")
+  var age = 0
+
+  // some method
+  override def toString = s"$firstName $lastName is $age years old"
+  def printHome{ print(s"HOME = $HOME")}
+  def printFullName = {println(this)} // uses toString
+
+  printHome
+  printFullName
+  println("still in the constructor")
+}
+
+//注意：Scala中被private修饰的字段，不可以被其他对象直接访问，并且其值也不可以改变。
+//控制构造函数字段的可见性
+//var字段：如果一个构造函数参数被声明为var，该字段的值是可变的，Scala会为它生成getter和setter方法。
+
+ class Person(var name: String)
+
+ val p = new Person("Alvin Alexander")
+  // getter
+   p.name
+  // setter
+   p.name = "gnahznib"
+
+ p.name
+
+//val字段：如果构造函数参数字段被定义为val，那么这个字段一旦被赋值就无法改变，就像Java中的final。因此，有访问方法是很有必要的，但不应该有修改方法。
+
+ class Person(val name: String)
+
+ val p = new Person("Alvin Alexander")
+
+ p.name
+
+ p.name = "gnahznib"
+
+//  非val和非var的字段：当构造函数参数既没有声明为val或var是，字段的可见性很受限制，并且Scala不会为此生成访问修改方法。
+
+   class Person(name: String)
+
+   val p = new Person("Alvin Alexander")
+
+   p.name
+
+//    给val或var加上private：private关键字会阻止getter和setter方法的生成，所以这个字段只能被类的成员变量使用
+
+     class People(private var name: String){def getName{println(name)}}
+
+     val p = new People("Alvin Alexander")
+
+     p.name
+
+       p.getName
+
+//      定义辅助构造函数
+//      在类内部以this为名的方法定义辅助构造函数，可以定义多个辅助构造函数，但这些构造函数必须有不同签名(参数列表)。同时，每个构造函数必须调用一个之前已经定义好的构造函数。
+//
+//      辅助构造函数必须使用this命名创建；
+//      每个辅助构造函数必须从调用之前定义的构造函数开始；
+//      每个构造函数必须要有不同的签名；
+//      一个构造函数通过this调用另一个不同的构造函数。
+//      注意：一个辅助构造函数只需要调用之前定义过的构造函数就可以了。
+      // primary contructor
+      class Pizza(var crustSize: Int, var crustType: String) {
+      // one-arg auxiliary constructor
+      def this(crustSize: Int){
+        this(crustSize, Pizza.DEFAULT_CRUST_TYPE)
+      }
+
+      // one-arg auxiliary constructor
+      def this(crustType: String){
+        this(Pizza.DEFAULT_CRUST_SIZE, crustType)
+      }
+
+      // zero-arg auxiliary constructor
+      def this(){
+        this(Pizza.DEFAULT_CRUST_SIZE, Pizza.DEFAULT_CRUST_TYPE)
+      }
+
+      override def toString: String = s"A $crustSize inch pizza with a $crustType crust"
+
+object Pizza{
+  val DEFAULT_CRUST_SIZE = 12
+  val DEFAULT_CRUST_TYPE = "THIN"
+}
+}
+
+//定义一个私有的主构造函数
+//在使用单例模式时，需要创建一个私有的主构造函数。
+//在类名和构造函数接收的任意参数之间插入一个private关键字，就可以创建私有主构造函数。
+
+// 私有的主构造函数
+class Brain private{
+override def toString: String = "This is the brain"
+}
+
+object Brain {
+val brain = new Brain
+// 在类的伴生对象中实现一个getInstance方法
+def getInstance = brain
+}
+
+object SingletonTest extends App{
+val brain = Brain.getInstance
+println(brain)
+}
+//伴生对象：一个伴生对象就是定义在与类的同一个文件中，同时与类有相同的名字的对象。
