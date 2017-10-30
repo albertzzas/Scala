@@ -95,6 +95,14 @@ val monthNumberToName=Map(
    1->"Jan",
    2->"Feb"
    
+   
+ def isTrue(a:Any) = a match{
+   case 0 |""=>false
+   case _ =>true
+ }
+ isTrue(0)
+ isTrue(1)
+ 
 )
 
 val monthName=monthNumberToName(4)
